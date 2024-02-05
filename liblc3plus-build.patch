@@ -1,0 +1,93 @@
+diff -Naur LC3plus-1.4.1.old/src/floating_point/makefile LC3plus-1.4.1/src/floating_point/makefile
+--- LC3plus-1.4.1.old/src/floating_point/makefile	2024-02-05 16:17:37.347553745 +0100
++++ LC3plus-1.4.1/src/floating_point/makefile	2024-02-05 16:39:40.076577396 +0100
+@@ -5,7 +5,6 @@
+ CLANG                    = 0
+ GCOV                     = 0
+ NO_POST_REL_CHANGES_TEST = 0
+-OPTIM                    = 0
+ 
+ # Paths
+ VPATH  = .
+@@ -16,6 +15,9 @@
+ # Binary Name
+ NAME_LC3   = LC3plus
+ # Shared Library Name
++MAJOR      = 1
++MINOR      = 4
++MICRO      = 1
+ LIB_LC3    = libLC3plus.so
+ 
+ # Default tool settings
+@@ -23,27 +25,17 @@
+ RM        = rm -f
+ 
+ # Preprocessor(-I/-D) / Compiler / Linker flags
+-CFLAGS   += -std=c99 -fPIC                                            \
+-             -pedantic -Wcast-qual -Wall -W -Wextra -Wno-long-long     \
+-             -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes  \
+-             -Werror-implicit-function-declaration
++CFLAGS   += -std=c99 -fPIC
+ 
+ LDFLAGS += -lm -g
+ # Include dependency flags
+ DEPFLAGS = -MT $@ -MMD -MP -MF $(BUILD)/$*.Td
+ 
+-ifneq "$(DEBUG)" "0"
+-    CFLAGS   += -g3
+-    LDFLAGS  += -g3
+-endif
+-
+ ifeq "$(GCOV)" "1"
+     CFLAGS  += -fprofile-arcs -ftest-coverage
+     LDFLAGS += -fprofile-arcs -ftest-coverage
+ endif
+ 
+-OPTIM    ?= 0
+-CFLAGS   += -O$(OPTIM)
+ CFLAGS   += $(foreach DIR,$(SRC_DIRS),-I$(DIR))
+ 
+ ifeq "$(NO_POST_REL_CHANGES_TEST)" "1"
+@@ -55,7 +47,6 @@
+     CC        = clang
+     CFLAGS   += -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer
+     LDFLAGS  += -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer
+-    OPTIM     = 2
+ endif
+ 
+ # address sanitizer, find buffer overflows
+@@ -63,7 +54,6 @@
+     CC        = clang
+     CFLAGS   += -fsanitize=address -fno-omit-frame-pointer
+     LDFLAGS  += -fsanitize=address -fno-omit-frame-pointer
+-    OPTIM     = 2
+ endif
+ 
+ # undefined behavior sanitizer, find bugs like integer overflows
+@@ -71,7 +61,6 @@
+     CC       = clang
+     CFLAGS  += -fsanitize=undefined
+     LDFLAGS += -fsanitize=undefined
+-    OPTIM    = 2
+ endif
+ 
+ # for code coverate test
+@@ -111,7 +100,6 @@
+ 	@echo 'Syntax: make [OPTION=VALUE ...]'
+ 	@echo 'Build options:'
+ 	@echo '    NO_POST_REL_CHANGES_TEST $(NO_POST_REL_CHANGES_TEST) [0,1]'
+-	@echo '    OPTIM                    $(OPTIM) [0-3]'
+ 	@echo 'Debug options:'
+ 	@echo '    AFL                      $(AFL) [0,1]'
+ 	@echo '    CLANG                    $(CLANG) [0-3]'
+@@ -123,7 +111,9 @@
+ 
+ $(LIB_LC3): $(LIBOBJS)
+ 	@echo 'Linking' $@
+-	$(QUIET) $(LINK) --shared $(OBJS) -o $@ $(LDFLAGS)
++	$(QUIET) $(LINK) --shared -Wl,-soname=$(@F).$(MAJOR) -o $@.$(MAJOR).$(MINOR).$(MICRO) $(OBJS) $(LDFLAGS)
++	ln -s $(@F).$(MAJOR).$(MINOR).$(MICRO) $@.$(MAJOR)
++	ln -s $(@F).$(MAJOR) $@
+ 
+ clean:
+ 	$(QUIET) rm -rf $(NAME_LC3) $(LIB_LC3) $(BUILD) ccConvert
