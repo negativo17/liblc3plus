@@ -1,0 +1,29 @@
+diff -Naur LC3plus-1.5.1.old/src/floating_point/makefile LC3plus-1.5.1/src/floating_point/makefile
+--- LC3plus-1.5.1.old/src/floating_point/makefile	2024-09-26 17:52:22.747893041 +0200
++++ LC3plus-1.5.1/src/floating_point/makefile	2024-09-27 11:08:33.574202195 +0200
+@@ -25,6 +25,9 @@
+ # Binary Name
+ NAME_LC3   = LC3plus
+ # Shared Library Name
++MAJOR      = 1
++MINOR      = 5
++MICRO      = 1
+ LIB_LC3    = libLC3plus.so
+ 
+ # Default tool settings
+@@ -137,10 +140,13 @@
+ 
+ $(LIB_LC3): $(LIBOBJS)
+ 	@echo 'Linking' $@
+-	$(QUIET) $(LINK) --shared $(OBJS) -o $@ $(LDFLAGS)
++	$(QUIET) $(LINK) --shared -Wl,-soname=$(@F).$(MAJOR) -o $@.$(MAJOR).$(MINOR).$(MICRO) $(OBJS) $(LDFLAGS)
++	ln -sf $(@F).$(MAJOR).$(MINOR).$(MICRO) $@.$(MAJOR)
++	ln -sf $(@F).$(MAJOR) $@
++	ls -al
+ 
+ clean:
+-	$(QUIET) rm -rf $(NAME_LC3) $(LIB_LC3) $(BUILD) ccConvert
++	$(QUIET) rm -rf $(NAME_LC3) $(LIB_LC3).* $(BUILD) ccConvert
+ 
+ $(BUILD)/%.o : %.c $(BUILD)/cc_flags
+ 	@echo 'Compiling' $<
