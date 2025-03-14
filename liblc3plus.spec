@@ -34,8 +34,7 @@ Summary: Utility package for %{name}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description utils
-Uitlities for command line use of and testing
-the %{name} library.
+Uitlities for command line use of and testing the %{name} library.
 
 %prep
 %autosetup -p1 -n LC3plus-%{version}
