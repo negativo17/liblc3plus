@@ -1,5 +1,5 @@
 Name:       liblc3plus
-Version:    1.5.1
+Version:    1.6.1
 Release:    1%{?dist}
 Summary:    Low Complexity Communication Codec Plus (LC3plus)
 License:    Fraunhofer LC3plus Patent Licensing
@@ -8,6 +8,7 @@ URL:        https://www.iis.fraunhofer.de/en/ff/amm/communication/lc3.html
 Source0:    https://github.com/arkq/LC3plus/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:    https://www.iis.fraunhofer.de/content/dam/iis/en/img/ff/Audio/patent-lizenz/Fraunhofer-LC3plus-Licensing.pdf
 Patch0:     %{name}-soname.patch
+Patch1:     %{name}-cflags.patch
 
 BuildRequires: gcc
 BuildRequires: make
@@ -53,7 +54,9 @@ mkdir -p %{buildroot}%{_bindir} \
     %{buildroot}%{_includedir} \
     %{buildroot}%{_libdir}
 install -p -m 0755 src/floating_point/LC3plus %{buildroot}%{_bindir}/
-install -p -m 0644 src/floating_point/lc3plus.h %{buildroot}%{_includedir}/
+install -p -m 0644 src/floating_point/lc3plus.h \
+    src/floating_point/defines.h \
+    %{buildroot}%{_includedir}/
 cp -a src/floating_point/libLC3plus.so* %{buildroot}%{_libdir}/
 
 %check
@@ -65,6 +68,7 @@ cd testvec
 %{_libdir}/libLC3plus.so.*
 
 %files devel
+%{_includedir}/defines.h
 %{_includedir}/lc3plus.h
 %{_libdir}/libLC3plus.so
 
@@ -72,6 +76,9 @@ cd testvec
 %{_bindir}/LC3plus
 
 %changelog
+* Tue Mar 17 2026 Simone Caronni <negativo17@gmail.com> - 1.6.1-1
+- Update to 1.6.1 (ETSI TS 103 634 V1.6.1).
+
 * Thu Sep 26 2024 Simone Caronni <negativo17@gmail.com> - 1.5.1-1
 - Update to 1.5.1 (ETSI TS 103 634 V1.5.1).
 

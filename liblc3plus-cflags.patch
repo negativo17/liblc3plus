@@ -1,0 +1,30 @@
+diff -Naur LC3plus-1.6.1.old/src/floating_point/makefile LC3plus-1.6.1/src/floating_point/makefile
+--- LC3plus-1.6.1.old/src/floating_point/makefile	2026-03-17 10:29:09.553824303 +0100
++++ LC3plus-1.6.1/src/floating_point/makefile	2026-03-17 10:28:53.831317957 +0100
+@@ -13,7 +13,6 @@
+ CLANG                    = 0
+ GCOV                     = 0
+ NO_POST_REL_CHANGES_TEST = 0
+-OPTIM                    = 0
+ SHORT_PLC_FADEOUT        = 0
+ 
+ # Paths
+@@ -48,18 +47,11 @@
+ # Include dependency flags
+ DEPFLAGS = -MT $@ -MMD -MP -MF $(BUILD)/$*.Td
+ 
+-ifneq "$(DEBUG)" "0"
+-    CFLAGS   += -g3
+-    LDFLAGS  += -g3
+-endif
+-
+ ifeq "$(GCOV)" "1"
+     CFLAGS  += -fprofile-arcs -ftest-coverage
+     LDFLAGS += -fprofile-arcs -ftest-coverage
+ endif
+ 
+-OPTIM    ?= 0
+-CFLAGS   += -O$(OPTIM)
+ CFLAGS   += $(foreach DIR,$(SRC_DIRS),-I$(DIR))
+ 
+ ifeq "$(NO_POST_REL_CHANGES_TEST)" "1"
